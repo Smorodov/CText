@@ -6,8 +6,8 @@ using namespace std;
 
 int main()
 {    
-    const char* input_name = "/Columbus.txt";
-    const char* output_name = "/Columbus_Highlight.html";
+    CText input_name = _T("/Columbus.txt");
+    CText output_name = _T("/Columbus_Highlight.html");
 
     CText pathIn = getcwd(0, 0);
     CText pathOut = pathIn;
@@ -17,7 +17,7 @@ int main()
     CText str;
     if(!str.readFile(pathIn.str()))
     {
-        std::cerr << "Error, con not open file: " << pathIn << std::endl;
+        std::cerr << "Error, con not open file: " << pathIn.str() << std::endl;
         return 0;
     }
     str.linesTrim(_T(". "));
