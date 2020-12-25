@@ -923,7 +923,7 @@ int test_transform()
         }
 
         {
-            CText text = _T("tHis is a simple TEXT");
+            CText text = _T("Это простой текст");
 
             if(text.isLower() || text.isUpper())
                 goto error;
@@ -933,16 +933,16 @@ int test_transform()
             CText textL = text;
             textL.toLower();
 
-            if(textU != _T("THIS IS A SIMPLE TEXT"))
+            if(textU != _T("ЭТО ПРОСТОЙ ТЕКСТ"))
                 goto error;
 
-            if(textL != _T("this is a simple text"))
+            if(textL != _T("это простой текст"))
                 goto error;
 
             if(textU.isUpper() || textL.isLower())
                 goto error;
 
-            if(!textU.substring(0, 4).isUpper() || !textL.substring(0, 4).isLower())
+            if(!textU.substring(0, 3).isUpper() || !textL.substring(0, 3).isLower())
                 goto error;
 
             if(!textU.isUpper(false) || !textL.isLower(false))
@@ -2054,17 +2054,18 @@ int test_convert()
             if(s != _T("The quick fox"))
                 goto error;
 
+            /*
             CText s3(_T(" jumps"));
             s << s3;
 
             if(s != _T("The quick fox jumps"))
                 goto error;
-
+            */
         }
 
         {
             CText s;
-            s << 5 << 6 << '0' << 'A' << 'Z';
+            s << 5 << 6 << _T('0') << _T('A') << _T('Z');
             if(s != _T("560AZ"))
                 goto error;
         }
@@ -2480,8 +2481,8 @@ int test_unicode()
         // test initialize from unicode strings
         {
             CText s;
-            CText::FromSingle("Hello World", s);
-            if(s != _T("Hello World"))
+            CText::FromSingle(u8"привет", s);
+            if(s != _T("привет"))
                 goto error;
 
             s.fromSingle("Hello World");
@@ -3002,7 +3003,12 @@ int test_filepaths()
 
 
 int unitTest()
-{
+{    
+    setlocale(LC_ALL, "ru_RU.UTF8");
+    //std::use_facet< std::numpunct<wchar_t> >(std::wcout.getloc()).decimal_point();
+    //setlocale(LC_NUMERIC, "");
+    //std::locale::global(std::locale("ru_RU.UTF8"));
+    
     int errors = 0;
     errors += test_init();
     errors += test_add();

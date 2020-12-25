@@ -1,4 +1,5 @@
 #include "CTextT.h"
+#include "tchar.h"
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 CTextT<T>::CTextT()
@@ -168,6 +169,7 @@ CTextT<T>& CTextT<T>::operator<<(const std::basic_string<T>& s)
 }
 
 //-----------------------------------------------------------------------------------------------------------
+
 template <typename T>
 template <typename Num>
 CTextT<T>& CTextT<T>::operator<<(Num i)
@@ -498,63 +500,126 @@ T* CTextT<T>::Strncat(T *dst, const T *src, size_t n)
 template <typename T>
 T CTextT<T>::lower(T c)
 {
-    return ::tolower(c);
+    if (sizeof(T) == 1)
+    {
+        return ::tolower(c);
+    }
+    else
+    {
+        return ::towlower(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 T CTextT<T>::upper(T c)
 {
-    return (T)(::toupper(c));
+    if (sizeof(T) == 1)
+    {
+        return (T)(::toupper(c));
+    }
+    else
+    {
+        return (T)(::towupper(c));
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::IsDigit(T c)
 {
-    return isdigit(c);
+    if (sizeof(T) == 1)
+    {
+        return isdigit(c);
+    }
+    else
+    {
+        return iswdigit(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::IsAlpha(T c)
 {
-    return isalpha(c);
+    if (sizeof(T) == 1)
+    {
+        return isalpha(c);
+    }
+    else
+    {
+        return iswalpha(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::IsAlphanumeric(T c)
 {
-    return isalnum(c);
+    if (sizeof(T) == 1)
+    {
+        return isalnum(c);
+    }
+    else
+    {
+        return iswalnum(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::IsLower(T c)
 {
-    return islower(c);
+    if (sizeof(T) == 1)
+    {
+        return islower(c);
+    }
+    else
+    {
+        return iswlower(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::IsHex(T c)
 {
-    return isxdigit(c);
+    if (sizeof(T) == 1)
+    {
+        return isxdigit(c);
+    }
+    else
+    {
+        return iswxdigit(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::IsUpper(T c)
 {
-    return isupper(c);
+    if (sizeof(T) == 1)
+    {
+        return isupper(c);
+    }
+    else
+    {
+        return iswupper(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 bool CTextT<T>::IsSpace(T c)
 {
-    return isspace(c);
+    if (sizeof(T) == 1)
+    {
+        return isspace(c);
+    }
+    else
+    {
+        return iswspace(c);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -2019,12 +2084,22 @@ CTextT<T>& CTextT<T>::reduceChainAny(const T* cList)
 template <typename T>
 void CTextT<T>::reduceToNumber()
 {
+    T dec_sep;
+    if(sizeof(T)==1)
+    {
+        dec_sep = std::use_facet< std::numpunct<char> >(std::cout.getloc()).decimal_point();
+    }
+    else
+    {
+        dec_sep = std::use_facet< std::numpunct<wchar_t> >(std::wcout.getloc()).decimal_point();
+    }
+    replace(dec_sep, _T('.'));
     auto from = m_str.begin();
     auto to = m_str.begin();
 
     while(from != m_str.end())
     {
-        if(IsDigit(*from))
+        if(IsDigit(*from) || *from==_T('.'))
         {
             if(to != from)
                 *to = *from;
@@ -2137,8 +2212,14 @@ CTextT<T>& CTextT<T>::toUpper()
 {
     if(isEmpty())
         return *this;
-
-    std::transform(m_str.begin(), m_str.end(), m_str.begin(), toupper);
+    if (sizeof(T) == 1)
+    {
+        std::transform(m_str.begin(), m_str.end(), m_str.begin(), toupper);
+    }
+    else
+    {
+        std::transform(m_str.begin(), m_str.end(), m_str.begin(), towupper);
+    }
     return *this;
 }
 
@@ -2148,8 +2229,14 @@ CTextT<T>& CTextT<T>::toLower()
 {
     if(isEmpty())
         return *this;
-
-    std::transform(m_str.begin(), m_str.end(), m_str.begin(), tolower);
+    if (sizeof(T) == 1)
+    {
+        std::transform(m_str.begin(), m_str.end(), m_str.begin(), tolower);
+    }
+    else
+    {
+        std::transform(m_str.begin(), m_str.end(), m_str.begin(), towlower);
+    }
     return *this;
 }
 
@@ -2489,11 +2576,14 @@ int CTextT<T>::toInteger(bool& bOk) const
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 double CTextT<T>::toDouble(bool& bOk) const
-{
+{    
+    std::locale l = std::locale::global(std::locale("C"));
     double d;
+
     std::basic_istringstream<T> iss(m_str);
     iss >> d;
     bOk = !iss.fail();
+    std::locale::global(l);
     return d;
 }
 
@@ -3417,6 +3507,7 @@ bool CTextT<T>::fromInteger(Num i, bool append)
     std::basic_stringstream<T> ss;
     ss << i;
     append ? m_str.append(ss.str()) : m_str = ss.str();
+    reduceToNumber();
     return !ss.fail();
 }
 
@@ -3424,11 +3515,16 @@ bool CTextT<T>::fromInteger(Num i, bool append)
 template <typename T>
 bool CTextT<T>::fromDouble(double d, int precision, bool fixed, bool append)
 {
+    std::locale l = std::locale::global(std::locale("C"));
+
     std::basic_stringstream<T> ss;
     if(fixed) ss << std::fixed;
     else      ss << std::scientific;
     ss << std::setprecision(precision) << d;
     append ? m_str.append(ss.str()) : m_str = ss.str();
+   
+    //do some stuff here
+    std::locale::global(l);
     return !ss.fail();
 }
 
@@ -3486,6 +3582,8 @@ CTextT<wchar_t> CTextT<T>::toWide()
 template <typename T>
 bool CTextT<T>::format(const T* format, ...)
 {
+    std::locale l = std::locale::global(std::locale("C"));
+
     m_str.clear();
     size_t length;
     va_list ap;
@@ -3504,6 +3602,10 @@ bool CTextT<T>::format(const T* format, ...)
 
     m_str.resize(length);
     size_t n = Vsnprintf((T *)m_str.data(), m_str.size() + 1, format, ap);
+   
+    //do some stuff here
+    std::locale::global(l);
+
     if(n > capacity())
         return false;
 
