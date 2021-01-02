@@ -95,7 +95,7 @@ public:
     friend CTextT operator+(const CTextT& string, const T* str)              { return Add(string, str); }
     friend CTextT operator+(const T* str, const CTextT& string)              { return Add(string, str); }
     friend CTextT operator+(const CTextT& string, T ch)                      { return Add(string, ch); }
-    friend CTextT operator+(T ch, const CTextT& string)                      { return Add(string, ch); }
+    friend CTextT operator+(T ch, const CTextT& string)                      { return Add(ch,string); }
 
     const CTextT& operator+=(const T* str);
     const CTextT& operator+=(const CTextT& string);
@@ -368,6 +368,7 @@ public:
     static CTextT<T>  Add(const CTextT&, const CTextT&);  // returns the concatenation of the both strings
     static CTextT<T>  Add(const CTextT&, const T*);
     static CTextT<T>  Add(const CTextT&, T c);
+    static CTextT<T>  Add(T c, const CTextT&);
     static bool       ArePermutation(const CTextT& a, const CTextT& b);
     static CTextT<T>  GetDir(const T* path);
  ContC static size_t  GeneratePermutations(C& container, CTextT& s);

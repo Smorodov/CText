@@ -330,7 +330,14 @@ CTextT<T> CTextT<T>::Add(const CTextT<T>& str, T c)
     res.m_str = str.m_str + c;
     return res;
 }
-
+//-----------------------------------------------------------------------------------------------------------
+template <typename T>
+CTextT<T> CTextT<T>::Add(T c, const CTextT<T>& str)
+{
+    CTextT<T> res(c);
+    res.m_str = res.m_str+str.m_str;
+    return res;
+}
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
 CTextT<T>& CTextT<T>::append(const CTextT<T>& str)
