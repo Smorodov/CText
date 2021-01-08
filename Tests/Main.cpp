@@ -4,6 +4,7 @@
 int main()
 {
     CText t = _T("Слово");
-    CText result = _T('Ы')+t;
+    CText result1 = _T('Ы') + t;
+    CText result2 = _T("Ы") + t;
     unitTest();
 }

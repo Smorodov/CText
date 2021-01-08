@@ -2571,9 +2571,9 @@ CTextT<T>& CTextT<T>::sort()
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-int CTextT<T>::toInteger(bool& bOk) const
+long long int CTextT<T>::toInteger(bool& bOk) const
 {
-    int number;
+    long long int number;
     std::basic_istringstream<T> iss(m_str);
     iss >> number;
     bOk = !iss.fail();
@@ -2596,9 +2596,9 @@ double CTextT<T>::toDouble(bool& bOk) const
 
 //-----------------------------------------------------------------------------------------------------------
 template <typename T>
-unsigned int CTextT<T>::toUInteger(bool& bOk) const
+unsigned long long int CTextT<T>::toUInteger(bool& bOk) const
 {
-    unsigned int number;
+    unsigned long long int number;
     std::basic_istringstream<T> iss(m_str);
     iss >> number;
     bOk = !iss.fail();

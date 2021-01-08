@@ -93,7 +93,7 @@ public:
 
     friend CTextT operator+(const CTextT& string1, const CTextT& string2)    { return Add(string1, string2); }
     friend CTextT operator+(const CTextT& string, const T* str)              { return Add(string, str); }
-    friend CTextT operator+(const T* str, const CTextT& string)              { return Add(string, str); }
+    friend CTextT operator+(const T* str, const CTextT& string)              { return Add(str, string); }
     friend CTextT operator+(const CTextT& string, T ch)                      { return Add(string, ch); }
     friend CTextT operator+(T ch, const CTextT& string)                      { return Add(ch,string); }
 
@@ -340,8 +340,8 @@ public:
   unsigned int   toBinaryNumber(bool& bOk); //if the string contains a binary number, convert it   
   unsigned int   toHexNumber(bool& bOk);  //if the string contains a hex number convert it , "1E" --> 30   
     double       toDouble(bool& bOk) const;
-    int          toInteger(bool& bOk) const;
-   unsigned int  toUInteger(bool& bOk) const;
+   long long int toInteger(bool& bOk) const;
+   unsigned long long int  toUInteger(bool& bOk) const;
    ContN bool    toArray(C& container, T sep = *SPACE, bool asHex = false) const; // parse our string to integers array divided by the given separator, can be used to parse CSV of integers
    ContN bool    toMatrix(std::vector<C>& container, T sep,  const T* sepLine = EOL) const;  // parse to matrix
    ContN bool    toChars(C& container, bool asHex = false) const; // fill the container with single characters 
